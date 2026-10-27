@@ -25,17 +25,70 @@ MicLock switches the input back to the built-in mic as soon as macOS hands it to
 
 The menu bar icon is a filled mic while MicLock is on and a crossed-out mic while it's off.
 
-## Install
+## Install with an AI agent
 
-Requirements: macOS 13 or later, and the Xcode Command Line Tools (`xcode-select --install`). Xcode itself is not needed.
+The easiest way: open this repo in a coding agent such as Claude Code, Codex or Cursor and tell it:
+
+> Build and install MicLock, then verify it works.
+
+The repo includes [AGENTS.md](AGENTS.md) (also read by Claude Code via `CLAUDE.md`) with step-by-step install, verification and troubleshooting instructions for agents.
+
+## Build and install it yourself
+
+### Requirements
+
+- macOS 13 (Ventura) or later
+- The Xcode Command Line Tools. Check with `swift --version`; if it's missing, install them with:
+
+  ```bash
+  xcode-select --install
+  ```
+
+  The full Xcode app is not needed.
+
+### Steps
+
+1. Get the code:
+
+   ```bash
+   git clone https://github.com/paolosabatella/mic-lock.git
+   cd mic-lock
+   ```
+
+2. Build and install:
+
+   ```bash
+   ./build.sh --install
+   ```
+
+   This builds `MicLock.app`, signs it ad hoc, copies it to `/Applications` and launches it. A mic icon appears in the menu bar. To build without installing, run `./build.sh`; the app is then in `build/MicLock.app`.
+
+3. Optional: open the menu bar icon and turn on **Launch at Login**.
+
+Building from source means macOS doesn't show a Gatekeeper warning, because the app never got the "downloaded from the internet" flag.
+
+### Check that it works
+
+Connect your AirPods, then run:
 
 ```bash
-git clone https://github.com/paolosabatella/mic-lock.git
-cd mic-lock
+swift scripts/verify.swift
+```
+
+It switches the default input to the AirPods mic, as macOS does when they connect, and checks that MicLock switches it back. It prints `PASS`, `FAIL` or `SKIP` (when MicLock isn't running or no Bluetooth mic is connected).
+
+### Updating
+
+```bash
+git pull
 ./build.sh --install
 ```
 
-This builds `MicLock.app`, signs it ad hoc, copies it to `/Applications` and launches it. Run `./build.sh` without `--install` to build into `build/MicLock.app` only.
+### Troubleshooting
+
+- **`swift: command not found`:** install the Command Line Tools with `xcode-select --install`.
+- **An app still records from the AirPods:** that app picks its own mic. Set its input to "System Default" in its settings.
+- **Launch at Login shows an error:** MicLock must run from `/Applications`. Reinstall with `./build.sh --install`.
 
 ## Uninstall
 

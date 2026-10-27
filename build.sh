@@ -3,6 +3,11 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+if ! command -v swift >/dev/null; then
+    echo "error: swift not found. Install the Xcode Command Line Tools with: xcode-select --install" >&2
+    exit 1
+fi
+
 swift build -c release
 APP=build/MicLock.app
 rm -rf "$APP"
